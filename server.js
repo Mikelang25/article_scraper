@@ -23,7 +23,7 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 app.get("/scrape", function (req, res) {
     axios.get("https://screenrant.com/movie-news/").then(function (response) {
         var $ = cheerio.load(response.data);
-
+        var articles = [];
         $("article").each(function (i, element) {
             var result = {};
             result._id = $(this).find(".bc-info").find(".bc-title").children("a").text();
@@ -31,17 +31,9 @@ app.get("/scrape", function (req, res) {
             result.author = $(this).find(".bc-info").find(".bc-details").children("a").prop("title");
             result.datePub = $(this).find(".bc-info").find(".bc-details").children("time").text();
             result.link = "https://screenrant.com" + $(this).find(".bc-img-link").attr("href");
-            console.log(result)
-
-            db.Article.create(result)
-                .then(function (dbArticle) {
-                    console.log(dbArticle);
-                })
-                .catch(function (err) {
-                    console.log(err);
-                });
+            articles.push(result)
         });
-        res.send("Scrape Complete");
+        res.json(articles)
     });
 });
 

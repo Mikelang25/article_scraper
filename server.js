@@ -57,7 +57,7 @@ app.get("/findarticles", function (req, res) {
 });
 
 app.get("/findarticles/:id", function (req, res) {
-
+    
 
 });
 

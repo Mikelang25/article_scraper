@@ -1,0 +1,18 @@
+
+.main-header{
+    color:black;
+    height:700px;
+    padding-top:200px;
+    font-size:60pt;
+    background-image: url("../images/newspaper.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+.nav-custom{
+    color: white;
+}
+
+.item-custom{
+    font-weight: bolder;
+}

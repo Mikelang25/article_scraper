@@ -1,31 +1,31 @@
-var express = require("express");
-var logger = require("morgan");
-var mongoose = require("mongoose");
-var path = require('path')
+const express = require("express");
+const logger = require("morgan");
+const mongoose = require("mongoose");
+const path = require('path')
 
-var axios = require("axios");
-var cheerio = require("cheerio");
+const axios = require("axios");
+const cheerio = require("cheerio");
 
-var db = require("./models");
-var PORT = 3000;
+const db = require("./models");
+const PORT = 3000;
 
-var app = express();
+const app = express();
 
 app.use(logger("dev"));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended:true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 
-app.get("/scrape", function (req, res) {
-    axios.get("https://screenrant.com/movie-news/").then(function (response) {
-        var $ = cheerio.load(response.data);
-        var articles = [];
+app.get("/scrape",(req, res) => {
+    axios.get("https://screenrant.com/movie-news/").then(response => {
+        const $ = cheerio.load(response.data);
+        const articles = [];
         $("article").each(function (i, element) {
-            var result = {};
+            let result = {};
             result._id = $(this).find(".bc-info").find(".bc-title").children("a").text();
             result.summary = $(this).find(".bc-excerpt").text();
             result.author = $(this).find(".bc-info").find(".bc-details").children("a").prop("title");
@@ -37,15 +37,17 @@ app.get("/scrape", function (req, res) {
     });
 });
 
-
-app.get("/findarticles", function (req, res) {
+app.get("/findarticles",(req, res) => {
     db.Article.find({})
-        .then(function (dbArticle) {
-            res.json(dbArticle);
-        })
-        .catch(function (err) {
-            res.json(err);
-        });
+        .then(dbArticle => res.json(dbArticle))
+        .catch(err => res.json(err));
+});
+
+app.post("/savearticle", function (req, res) {
+    db.Article.create(req.body)
+    .then(function(dbArticle) {
+        res.json(dbArticle);
+    })
 });
 
 app.get("/findarticles/:id", function (req, res) {

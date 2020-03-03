@@ -30,7 +30,7 @@
     text-indent:10px;
 }
 
-.author, .pubDate{
+.author, .pubDate, .link{
     font-weight: bold;
     margin-left:15px;
     font-size: 8pt;

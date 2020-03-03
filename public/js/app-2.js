@@ -17,6 +17,7 @@ $(document).ready(() => {
     });
 
     $(document).on("click", ".btn-note", function () {
+        $("#note").text("")
         $("#create-note").val("")
         let selected = $(this).parents(".article").attr("id")
         console.log(selected)
@@ -24,7 +25,7 @@ $(document).ready(() => {
         $.ajax({
             method: "GET",
             url: "/articles/" + selected
-        }).then(function (data) {
+        }).then(data => {
             console.log(data)
             const note = data.note ? data.note : "There is no assigned note";
             $("#note").text(note.body);
@@ -33,8 +34,7 @@ $(document).ready(() => {
         });
     });
 
-    $(document).on("click", "#btn-addnote", function () {
-        
+    $(document).on("click", "#btn-addnote", function () {        
         let selected = $("#current-article").text()
         console.log(selected)
         let note = $("#create-note").text()
@@ -55,7 +55,12 @@ $(document).ready(() => {
         $('#modal-note').modal('hide');
     });
 
-    $(document).on("click", ".btn-rm", () => {
-        console.log("this works")
+    $(document).on("click", ".btn-rm", function () {  
+        let selected = $(this).parents(".article").attr("id")
+        $.ajax({
+            type: "DELETE",
+            url: "/article/" + selected,
+        }).then(() => $(this).parents(".article").remove());
     });
+
 });

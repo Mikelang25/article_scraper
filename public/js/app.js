@@ -5,7 +5,6 @@ $(document).ready(() => {
     $(document).on("click", "#btn-scrape", () => {
 
         $.get("/scrape", data => {
-            console.log(data)
             for(let i=0;i<data.length;i++){
                 const article = $("<div>").append(
                     $("<p>").html(data[i]._id + "<button class='btn-add'>Add</button>").addClass("title"),
@@ -36,8 +35,11 @@ $(document).ready(() => {
             data: selected
         }).then(
             data => {
-                $(this).parents(".article").remove();
-                console.log("Your article has been saved");
+                    if(data){
+                        $(this).parents(".article").remove();
+                        console.log("Your article has been saved");
+                    }
+
             }
         );
     });

@@ -43,22 +43,35 @@ app.get("/findarticles",(req, res) => {
         .catch(err => res.json(err));
 });
 
-app.post("/savearticle", function (req, res) {
+app.post("/savearticle", (req, res) => {
     db.Article.create(req.body)
-    .then(function(dbArticle) {
+    .then(dbArticle => res.json(dbArticle))
+});
+
+app.get("/articles/:id", function(req, res) {
+    console.log(req.params.id)
+    db.Article.findOne({ _id: req.params.id })
+      .populate("note")
+      .then(function(dbArticle) {
         res.json(dbArticle);
-    })
-});
+      })
+      .catch(function(err) {
+        res.json(err);
+      });
+  });
 
-app.get("/findarticles/:id", function (req, res) {
-    
-
-});
-
-app.post("/articles/:id", function (req, res) {
-
-
-});
+  app.post("/articlenote/:id", function(req, res) {
+    db.Note.create(req.body)
+      .then(function(dbNote) {
+        return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+      })
+      .then(function(dbArticle) {
+        res.json(dbArticle);
+      })
+      .catch(function(err) {
+        res.json(err);
+      });
+  });
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, '/views/index.html'))
